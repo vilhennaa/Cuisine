@@ -10,7 +10,7 @@ interface RecipesRepository {
         title: String,
         description: String?,
         photo: String?,
-        ingredients: List<String>,
+       // ingredients: List<String>,
         preparation: String?
 
     )

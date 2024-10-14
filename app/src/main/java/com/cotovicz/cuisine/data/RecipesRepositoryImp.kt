@@ -12,14 +12,14 @@ class RecipesRepositoryImp(
         title: String,
         description: String?,
         photo: String?,
-        ingredients: List<String>,
+        //  ingredients: List<String>,
         preparation: String?
     ) {
         val entity = RecipesEntity(
             title = title,
             description = description,
             photo = photo,
-            ingredients = ingredients,
+            //ingredients = ingredients,
             preparation = preparation
         )
 
@@ -39,7 +39,7 @@ class RecipesRepositoryImp(
                     title = entity.title,
                     description = entity.description,
                     photo = entity.photo,
-                    ingredients = entity.ingredients,
+                    //ingredients = entity.ingredients,
                     preparation = entity.preparation
                 )
             }
@@ -53,7 +53,7 @@ class RecipesRepositoryImp(
                 title = entity.title,
                 description = entity.description,
                 photo = entity.photo,
-                ingredients = entity.ingredients,
+                //ingredients = entity.ingredients,
                 preparation = entity.preparation
             )
         }
