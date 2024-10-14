@@ -11,8 +11,8 @@ interface RecipesRepository {
         description: String?,
         photo: String?,
        // ingredients: List<String>,
-        preparation: String?
-
+        preparation: String?,
+        id: Long? = null
     )
 
     suspend fun delete(id: Long)

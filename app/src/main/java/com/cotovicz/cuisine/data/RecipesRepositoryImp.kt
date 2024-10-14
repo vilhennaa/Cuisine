@@ -13,14 +13,23 @@ class RecipesRepositoryImp(
         description: String?,
         photo: String?,
         //  ingredients: List<String>,
-        preparation: String?
+        preparation: String?,
+        id: Long?,
     ) {
-        val entity = RecipesEntity(
+        val entity = id?.let {
+            dao.getById(it)?.copy(
+                title = title,
+                description = description,
+                photo = photo,
+                //ingredients = ingredients,
+                preparation = preparation,
+            )
+        } ?: RecipesEntity(
             title = title,
             description = description,
             photo = photo,
             //ingredients = ingredients,
-            preparation = preparation
+            preparation = preparation,
         )
 
         dao.insert(entity)
