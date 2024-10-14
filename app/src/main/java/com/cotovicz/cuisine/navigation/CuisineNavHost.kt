@@ -1,12 +1,11 @@
 package com.cotovicz.cuisine.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.cotovicz.cuisine.ui.feature.AddEditScreen
+import com.cotovicz.cuisine.ui.feature.addedit.AddEditScreen
 import com.cotovicz.cuisine.ui.feature.RecipesListScreen
 import kotlinx.serialization.Serializable
 
@@ -33,7 +32,11 @@ fun CuisineNavHost() {
 
         composable<AddEditRoute> { navBackStackEntry ->
             val addEditId = navBackStackEntry.toRoute<AddEditRoute>()
-            AddEditScreen()
+            AddEditScreen(
+                navigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

@@ -5,7 +5,7 @@ data class Recipes(
     val title: String,
     val description: String? = null,
     val photo: String? = null, // String para o momento...
-    val ingredients: List<String> = emptyList(),
+  //  val ingredients: List<String> = emptyList(),
     val preparation: String? = null
 )
 //fake objcs
