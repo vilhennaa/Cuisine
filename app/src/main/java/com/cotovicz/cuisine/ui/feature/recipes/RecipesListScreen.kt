@@ -1,4 +1,4 @@
-package com.cotovicz.cuisine.ui.feature
+package com.cotovicz.cuisine.ui.feature.recipes
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +12,22 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cotovicz.cuisine.data.RecipesDatabaseProvider
+import com.cotovicz.cuisine.data.RecipesRepositoryImp
 import com.cotovicz.cuisine.domain.Recipes
 import com.cotovicz.cuisine.domain.recipe1
 import com.cotovicz.cuisine.domain.recipe2
 import com.cotovicz.cuisine.domain.recipe3
+import com.cotovicz.cuisine.navigation.AddEditRoute
+import com.cotovicz.cuisine.ui.UiEvent
 import com.cotovicz.cuisine.ui.components.RecipesItem
 import com.cotovicz.cuisine.ui.theme.CuisineTheme
 
@@ -26,20 +35,48 @@ import com.cotovicz.cuisine.ui.theme.CuisineTheme
 fun RecipesListScreen(
     navigateToAddEditScreen: (Long?) -> Unit,
 ) {
+    val context = LocalContext.current.applicationContext
+    val database = RecipesDatabaseProvider.provide(context)
+    val repository = RecipesRepositoryImp(dao = database.recipesDao)
+
+    val viewModel = viewModel<RecipesListViewModel> { RecipesListViewModel(repository = repository) }
+
+    val recipes by viewModel.recipes.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { uiEvent ->
+            when (uiEvent) {
+                is UiEvent.Navigate<*> -> {
+                    when(uiEvent.route) {
+                        is AddEditRoute -> navigateToAddEditScreen(uiEvent.route.id)
+                    }
+                }
+                UiEvent.NavigateBack -> {
+
+                }
+                is UiEvent.ShowSnackbar -> {
+
+                }
+            }
+        }
+    }
+
     RecipesListContent(
-        recipes = emptyList(),
-        onAddItemClick = navigateToAddEditScreen,
+        recipes = recipes,
+        onEvent = viewModel::onEvent
     )
 }
 
 @Composable
 fun RecipesListContent(
     recipes: List<Recipes>,
-    onAddItemClick: (id: Long?) -> Unit,
+    onEvent: (RecipesListEvent) -> Unit,
 ) {
     Scaffold(
        floatingActionButton = {
-           FloatingActionButton(onClick = { onAddItemClick(null) }) {
+           FloatingActionButton(onClick = {
+               onEvent(RecipesListEvent.AddEdit(null))
+           }) {
                Icon(Icons.Default.Add, contentDescription = "Add")
            }
        }
@@ -53,8 +90,8 @@ fun RecipesListContent(
             itemsIndexed(recipes) { index, recipe ->
                 RecipesItem(
                     recipes = recipe,
-                    onItemClick = {  },
-                    onDeleteClick = {  }
+                    onItemClick = { onEvent(RecipesListEvent.AddEdit(recipe.id)) },
+                    onDeleteClick = { onEvent(RecipesListEvent.DeleteRecipe(recipe.id)) }
                 )
 
                 if (index < recipes.lastIndex) {
@@ -75,7 +112,7 @@ private fun RecipesListContentPreview() {
                 recipe2,
                 recipe3,
             ),
-            onAddItemClick = {},
+            onEvent = {}
         )
     }
 }

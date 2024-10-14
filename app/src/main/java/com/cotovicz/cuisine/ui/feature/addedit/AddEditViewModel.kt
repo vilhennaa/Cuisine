@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class AddEditViewModel(
+    private val id: Long? = null,
     private val repository: RecipesRepository,
 ): ViewModel() {
 
@@ -32,6 +33,19 @@ class AddEditViewModel(
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    init {
+        id?.let {
+            viewModelScope.launch {
+                val recipe = repository.getById(it)
+                title = recipe?.title ?: ""
+                description = recipe?.description
+                photo = recipe?.photo
+                //ingredients = recipe?.ingredients
+                preparation = recipe?.preparation
+            }
+        }
+    }
 
     fun onEvent(event: AddEditEvent) {
         when(event) {
@@ -56,7 +70,8 @@ class AddEditViewModel(
                 description = description,
                 photo = photo,
                 //ingredients = ingredients,
-                preparation = preparation
+                preparation = preparation,
+                id = id,
             )
             _uiEvent.send(UiEvent.NavigateBack)
         }
